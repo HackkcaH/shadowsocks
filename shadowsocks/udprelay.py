@@ -173,6 +173,8 @@ class UDPRelay(object):
                     data = data[3:]
         else:
             # decrypt data
+            # logging.error(self._password) # n tem como ver a senha pois vem o texto codificado e tem q descodificar com a senha batendo daki | tentar mandar algo apos decodificar
+            # self._password = "1234"
             try:
                 data, key, iv = cryptor.decrypt_all(self._password,
                                                     self._method,
@@ -183,6 +185,7 @@ class UDPRelay(object):
             if not data:
                 logging.debug('UDP handle_server: data is empty after decrypt')
                 return
+        # logging.error(data) # texto decodificado
         header_result = parse_header(data)
         if header_result is None:
             return
@@ -207,7 +210,7 @@ class UDPRelay(object):
                 _key = iv + key
                 if onetimeauth_verify(_hash, data, _key) is False:
                     logging.warn('UDP one time auth fail')
-                    return
+                    return   
         addrs = self._dns_cache.get(server_addr, None)
         if addrs is None:
             addrs = socket.getaddrinfo(server_addr, server_port, 0,
